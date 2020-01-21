@@ -20,6 +20,8 @@ var tabImg =
 
 var winSeed = getRandomInt(13);
 
+var tableAlreadyOutput = [];
+
 var bool;
 function createSlots (ring) {
 	
@@ -90,22 +92,23 @@ function spin(timer) {
 		var oldClass = $('#ring'+i).attr('class');
 		if(oldClass.length > 4) {
 			oldSeed = parseInt(oldClass.slice(10));
-			console.log(oldSeed);
 		}
 		var seed = getSeed();
 		while(oldSeed == seed) {
 			seed = getSeed();
 		}
-		seed=3;
+
 		$('#ring'+i)
-			.css('animation','back-spin 1s, spin-' + winSeed + ' ' + (timer + i*0.5) + 's')
+		.css('animation','back-spin 1s, spin-' + seed + ' ' + (timer + i*0.5) + 's')
+		.attr('class','ring spin-' + seed).css('animation','back-spin 1s, spin-' + winSeed + ' ' + (timer + i*0.5) + 's')
 			.attr('class','ring spin-' + winSeed);
 	}
 
 	console.log('=====');
 	setTimeout(function()
 	{ 
-		alert("winners")		
+		$("#winner").show();
+		$("#winner").delay(2000).fadeOut( 400 );			
 	}, 5000);
 	}
 	else
@@ -144,7 +147,7 @@ function spin(timer) {
 }
 
 $(document).ready(function() {
-
+	
 	// initiate slots 
  	createSlots($('#ring2'));
  	createSlots($('#ring3'));
