@@ -18,9 +18,7 @@ var tabImg =
     "assets/img/12.ico",
 ]
 
-var cadre1;
-var cadre2;
-var cadre3;
+var winSeed = getRandomInt(13);
 
 var bool;
 function createSlots (ring) {
@@ -77,7 +75,7 @@ function setWinorNot()
 
 function spin(timer) {
 	var bool = setWinorNot();
-
+	winSeed = getRandomInt(13);
 	if(bool)
 	{
 		console.log("win on")
@@ -100,8 +98,8 @@ function spin(timer) {
 		}
 		seed=3;
 		$('#ring'+i)
-			.css('animation','back-spin 1s, spin-' + seed + ' ' + (timer + i*0.5) + 's')
-			.attr('class','ring spin-' + seed);
+			.css('animation','back-spin 1s, spin-' + winSeed + ' ' + (timer + i*0.5) + 's')
+			.attr('class','ring spin-' + winSeed);
 	}
 
 	console.log('=====');
