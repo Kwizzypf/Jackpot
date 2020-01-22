@@ -18,11 +18,14 @@ var tabImg =
     "assets/img/12.ico",
 ]
 
+$("#winner").hide();
 var winSeed = getRandomInt(13);
 
 var tableAlreadyOutput = [];
+var tableSeedPrevious = [];
+var tabWin = [false, false, false, false, true];
+var cpt = 0;
 
-var bool;
 function createSlots (ring) {
 	
 	var slotAngle = 360 / SLOTS_PER_REEL;
@@ -61,61 +64,89 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
   }
 
-function setWinorNot()
-{
-	var test = getRandomInt(2);
 
-	if(test == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+function rollInMore(winSeed, timer, i)
+{
+	$('#ring'+i).css('animation','back-spin 1s, spin-' + winSeed + ' ' + (timer + i*0.5) + 's')
+			.attr('class','ring spin-' + winSeed);
 }
 
 function spin(timer) {
-	var bool = setWinorNot();
+
+	cpt = getRandomInt(5);
+	bool = tabWin[cpt];
+
+	var tryed = $(".score").html();
+	tryed = parseInt(tryed);
+
+	if( tryed == 0)
+	{
+		alert("Comeback later");
+		return;
+	}
+	
+	$(".score").html(tryed-100);
+	
 	winSeed = getRandomInt(13);
+
+	for(var i = 2; i < 5; i ++) 
+	{
+		var oldClass = $('#ring'+i).attr('class');
+		if(oldClass.length > 4) {
+			oldSeed = parseInt(oldClass.slice(10));
+		}
+		while(oldSeed == winSeed) {
+			console.log("test");
+			winSeed = getRandomInt(13);
+		}
+	}
+	
+
 	if(bool)
 	{
 		console.log("win on")
 		//var txt = 'seeds: ';
-	for(var i = 1; i < 6; i ++) {
+	for(var i = 2; i < 5; i ++) {
 		var oldSeed = -1;
 
 		/*
 		checking that the old seed from the previous iteration is not the same as the current iteration;
 		if this happens then the reel will not spin at all
 		*/
+
 		var oldClass = $('#ring'+i).attr('class');
 		if(oldClass.length > 4) {
 			oldSeed = parseInt(oldClass.slice(10));
 		}
+
 		var seed = getSeed();
 		while(oldSeed == seed) {
+			console.log("test");
 			seed = getSeed();
 		}
 
+
 		$('#ring'+i)
 		.css('animation','back-spin 1s, spin-' + seed + ' ' + (timer + i*0.5) + 's')
-		.attr('class','ring spin-' + seed).css('animation','back-spin 1s, spin-' + winSeed + ' ' + (timer + i*0.5) + 's')
-			.attr('class','ring spin-' + winSeed);
+		.attr('class','ring spin-' + seed);
+		
+		rollInMore(winSeed, timer, i);
 	}
 
 	console.log('=====');
 	setTimeout(function()
 	{ 
 		$("#winner").show();
-		$("#winner").delay(2000).fadeOut( 400 );			
-	}, 5000);
+		$("#winner").delay(2000).fadeOut( 400 );
+		$(".score").html(tryed+200);
+		tableSeedPrevious.length = 0;
+	}, 4000);
 	}
 	else
 	{
-
+		tableAlreadyOutput.length = 0;
 	//var txt = 'seeds: ';
-	for(var i = 1; i < 6; i ++) {
+	for(var i = 2; i < 5; i ++) {
 		var oldSeed = -1;
 
 		/*
@@ -125,10 +156,12 @@ function spin(timer) {
 		var oldClass = $('#ring'+i).attr('class');
 		if(oldClass.length > 4) {
 			oldSeed = parseInt(oldClass.slice(10));
-			console.log(oldSeed);
 		}
 		var seed = getSeed();
+
 		while(oldSeed == seed) {
+			console.log("test");
+
 			seed = getSeed();
 		}
 
@@ -141,8 +174,7 @@ function spin(timer) {
 	setTimeout(function()
 	{ 
 		
-	}, 5000);
-	console.log(timer + i * 0.5);
+	}, 4000);
 	}
 }
 
@@ -159,32 +191,7 @@ $(document).ready(function() {
  		spin(timer);
  	})
 
- 	// hook xray checkbox
- 	$('#xray').on('click',function(){
- 		//var isChecked = $('#xray:checked');
- 		var tilt = 'tiltout';
- 		
-    if($(this).is(':checked')) {
- 			tilt = 'tiltin';
- 			$('.slot').addClass('backface-on');
- 			$('#rotate').css('animation',tilt + ' 2s 1');
+ 
 
-			setTimeout(function(){
-			  $('#rotate').toggleClass('tilted');
-			},2000);
- 		} else {
-      tilt = 'tiltout';
- 			$('#rotate').css({'animation':tilt + ' 2s 1'});
 
-			setTimeout(function(){
-	 			$('#rotate').toggleClass('tilted');
-	 			$('.slot').removeClass('backface-on');
-	 		},1900);
- 		}
- 	})
-
- 	// hook perspective
- 	$('#perspective').on('click',function(){
- 		$('#stage').toggleClass('perspective-on perspective-off');
- 	})	
  });
